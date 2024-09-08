@@ -1,8 +1,9 @@
 import React from "react";
 import "../../App.css";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function Acceder() {
+export default function Login() {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -11,7 +12,7 @@ export default function Acceder() {
 
   return (
     <>
-      <h1 className="acceder">ACCEDER</h1>
+      <h1 className="login">INICIAR SESION</h1>
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" />
@@ -20,9 +21,14 @@ export default function Acceder() {
         <label htmlFor="password">Contraseña</label>
         <input id="password" type="text" />
       </div>
-      <button type="button" onClick={handleClick}>
-        Registrarse
-      </button>
+      <div>
+        <button type="button" onClick={handleClick}>
+          Registrarse
+        </button>
+      </div>
+      <div>
+        <Link to="/registrarse">O registrarse</Link>
+      </div>
     </>
   );
 }

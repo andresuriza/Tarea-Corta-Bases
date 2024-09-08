@@ -43,7 +43,7 @@ function Navbar() {
             </li>
             <li>
               <Link
-                to="/acceder"
+                to="/login"
                 className="nav-links-mobile"
                 onClick={closeMobileMenu}
               >

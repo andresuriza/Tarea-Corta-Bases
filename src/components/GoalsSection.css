@@ -1,0 +1,69 @@
+/* Container for the entire section */
+.goals-container {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: white;
+  }
+  
+  /* Main heading */
+  .goals-container h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  /* Subheading */
+  .goals-container p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 40px;
+  }
+  
+  /* Flexbox for goals */
+  .goals-items {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  /* Individual goal card */
+  .goal-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .goal-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .goal-card img {
+    width: 96px;
+    margin-bottom: 20px;
+  }
+  
+  .goal-card h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 15px;
+  }
+  
+  .goal-card p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .goals-items {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  

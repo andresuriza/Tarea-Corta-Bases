@@ -1,0 +1,103 @@
+/* General Article Styles */
+.article-container {
+    width: 80%;
+    margin: 0 auto;
+    font-family: 'Lato', sans-serif;
+    line-height: 1.7;
+    color: #333;
+  }
+  
+  .article-hero {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #f4f4f9;
+    color: #333;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .article-hero h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #1a73e8;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  
+  .article-hero p {
+    font-size: 1.5rem;
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  /* Article Section */
+  .article-content {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+  
+  .article-section {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: flex-start;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 40px;
+  }
+  
+  .article-section h2 {
+    font-size: 2.2rem;
+    color: #1a73e8;
+    margin-bottom: 15px;
+  }
+  
+  .article-section p {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.8;
+    flex: 1;
+  }
+  
+  /* Ajuste para que las imágenes tengan el mismo tamaño */
+  .article-section img {
+    width: 100%; /* Asegura que las imágenes se adapten al tamaño de su contenedor */
+    max-width: 450px; /* Limita el tamaño máximo */
+    height: 300px; /* Establece una altura fija */
+    object-fit: cover; /* Ajusta la imagen sin distorsionarla, cortando si es necesario */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .article-section img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .article-section {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .article-section img {
+      width: 100%;
+      max-width: 100%; /* Asegura que las imágenes ocupen todo el ancho en pantallas pequeñas */
+      height: auto; /* Ajusta la altura en pantallas pequeñas */
+    }
+  
+    .article-hero h1 {
+      font-size: 2.8rem;
+    }
+  
+    .article-hero p {
+      font-size: 1.2rem;
+    }
+  }
+  
+  
+  

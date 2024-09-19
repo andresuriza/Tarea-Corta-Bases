@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "../../App.css";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./Login.css";
@@ -12,7 +12,7 @@ export default function Login() {
     password: ''
   });
 
-  const [submittedData, setSubmittedData] = useState(null); // Para almacenar los datos enviados
+  const [error, setError] = useState(null);  // Estado para manejar los errores de login
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -24,8 +24,22 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Evita que la página se recargue
-    setSubmittedData(formData); // Guardamos los datos enviados para mostrarlos
-    // Aquí puedes hacer algo más con los datos, como enviarlos a una API
+
+    // Enviar los datos a la API Flask
+    axios.post("http://127.0.0.1:5000/api/login", formData)
+      .then(response => {
+        if (response.data.message) {
+          alert("¡Inicio de sesión exitoso!");
+          navigate("/"); // Redirigir a otra página después del login
+        }
+      })
+      .catch(error => {
+        if (error.response && error.response.data.error) {
+          setError(error.response.data.error);
+        } else {
+          setError("Hubo un error al iniciar sesión.");
+        }
+      });
   };
 
   return (
@@ -62,16 +76,12 @@ export default function Login() {
         <Link to="/registrarse">O registrarse</Link>
       </div>
 
-      {/* Mostrar los valores ingresados cuando se envía el formulario */}
-      {submittedData && (
-        <div className="submitted-data">
-          <h3>Datos enviados:</h3>
-          <p><strong>Email:</strong> {submittedData.email}</p>
-          <p><strong>Contraseña:</strong> {submittedData.password}</p>
+      {/* Mostrar errores de login */}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
         </div>
       )}
     </div>
   );
 }
-
-

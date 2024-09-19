@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../App.css";
 import "./HeroSection.css";
 import { Button } from "./Button";
@@ -9,12 +9,31 @@ import healthyFoodImage1 from "../images/avena.png";
 import healthyFoodImage2 from "../images/berries.png";
 
 function HeroSection() {
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  // Revisar si el usuario está logueado
+  useEffect(() => {
+    const user = localStorage.getItem("loggedInUser");
+    if (user) {
+      setLoggedInUser(user); // Si el usuario está logueado, actualiza el estado
+    }
+  }, []);
+
   return (
     <div className="hero-container">
-      {/* Bienvenida */}
+      {/* Bienvenida personalizada si el usuario está logueado */}
       <div className="welcome-message">
-        <h2>¡Bienvenido a NutriTEC!</h2>
-        <p>La plataforma que te ayudará a alcanzar tus metas de salud y bienestar.</p>
+        {loggedInUser ? (
+          <>
+            <h2>¡Hola de vuelta, {loggedInUser}!</h2>
+            <p>Estamos ansiosos por ayudarte a alcanzar tus metas de salud y bienestar.</p>
+          </>
+        ) : (
+          <>
+            <h2>¡Bienvenido a NutriTEC!</h2>
+            <p>La plataforma que te ayudará a alcanzar tus metas de salud y bienestar.</p>
+          </>
+        )}
       </div>
 
       {/* Texto principal del Hero */}
@@ -24,15 +43,18 @@ function HeroSection() {
           ¿Quieres prestar más atención a tu alimentación? Controla tus comidas, conoce tus hábitos y alcanza tus objetivos con NutriTEC.
         </p>
         <div className="hero-btns">
-          <Button className="btns" buttonStyle="btn--primary" buttonSize="btn--large">
-            EMPIEZA GRATIS
-          </Button>
+          {loggedInUser ? (
+            <p>¡Estamos felices de tenerte de vuelta!</p>
+          ) : (
+            <Button className="btns" buttonStyle="btn--primary" buttonSize="btn--large">
+              EMPIEZA GRATIS
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Imágenes de apoyo */}
       <div className="hero-images">
-        {/* Reemplaza las imágenes remotas por las locales */}
         <img src={healthyFoodImage1} alt="Comida saludable" className="hero-image" />
         <img src={healthyFoodImage2} alt="Alimentos saludables" className="hero-image" />
       </div>

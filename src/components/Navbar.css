@@ -2,27 +2,27 @@
   background-color: #f9f9f9; /* Fondo blanco */
   height: 80px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* Alinea el contenido a los extremos */
   align-items: center;
   font-size: 1.2rem;
   position: sticky;
   top: 0;
   z-index: 999;
+  padding: 0 20px; /* Añade un poco de padding para los bordes */
 }
 
 .navbar-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 80px;
-  max-width: 1500px;
+  width: 100%;
 }
 
 /* Color del logo NutriTEC */
 .navbar-logo {
   color: #007bff; /* Azul */
-  justify-self: start;
-  margin-left: 20px;
+  margin-left: 0; /* Alineación a la izquierda */
   cursor: pointer;
   text-decoration: none;
   font-size: 2rem;
@@ -43,38 +43,72 @@
   text-align: center;
   width: 60vw;
   justify-content: end;
-  margin-right: 2rem;
 }
 
-.nav-item {
-  height: 80px;
+/* Contenedor del ícono de perfil */
+.profile-icon {
+  cursor: pointer;
+  margin-right: 0; /* Elimina márgenes para alinear a la derecha */
 }
 
-/* El enlace "ACCEDER" en negro */
-.nav-links {
-  color: black; /* Texto en negro */
-  display: flex;
-  align-items: center;
+/* Estilo del menú desplegable */
+/* Estilo del menú desplegable */
+/* Estilo del menú desplegable */
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Alinea justo debajo del ícono */
+  right: 10px; /* Añade un margen de 10px desde el borde derecho */
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+
+
+/* Opciones dentro del menú desplegable */
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu ul li {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-menu ul li:hover {
+  background-color: #007bff; /* Color de fondo al pasar el mouse */
+  color: white; /* Color de texto al pasar el mouse */
+}
+
+/* Información del usuario y otras opciones */
+.dropdown-user-info, .dropdown-menu ul li {
+  text-align: left; /* Alineación del texto dentro del menú */
+}
+
+.dropdown-user-info {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.dropdown-user-info p {
+  font-weight: bold;
+  color: black;
+}
+
+.dropdown-user-info a {
+  color: #007bff; /* Color del enlace */
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  height: 100%;
 }
 
-.nav-links:hover {
-  border-bottom: 4px solid black; /* Subrayado en azul cuando se pase el mouse */
-  transition: all 0.2s ease-out;
-}
-
-.fa-bars {
-  color: black; /* Icono del menú en negro */
-}
-
-.nav-links-mobile {
-  display: none;
-}
-
-.menu-icon {
-  display: none;
+.dropdown-user-info a:hover {
+  text-decoration: underline;
 }
 
 /* Responsivo */
@@ -107,7 +141,7 @@
     text-align: center;
     padding: 2rem;
     width: 100%;
-    display: table; 
+    display: table;
   }
 
   .nav-links:hover {

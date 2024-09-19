@@ -29,8 +29,11 @@ export default function Login() {
     axios.post("http://127.0.0.1:5000/api/login", formData)
       .then(response => {
         if (response.data.message) {
+          // Guardar el nombre del usuario en localStorage
+          localStorage.setItem("loggedInUser", response.data.user[2]);  // Suponiendo que el nombre está en la posición 2 del arreglo
           alert("¡Inicio de sesión exitoso!");
           navigate("/"); // Redirigir a otra página después del login
+          window.location.reload(); // Refrescar la página para actualizar la barra de navegación
         }
       })
       .catch(error => {

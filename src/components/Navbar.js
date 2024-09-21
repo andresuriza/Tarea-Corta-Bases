@@ -19,6 +19,7 @@ function Navbar() {
   // Función para cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser"); // Eliminar el usuario del localStorage
+    localStorage.removeItem("userRole"); // Eliminar el usuario del localStorage
     setLoggedInUser(null); // Actualizar el estado a null
     setShowMenu(false); // Cerrar el menú desplegable si está abierto
     navigate("/"); // Redirigir a la página principal

@@ -21,6 +21,7 @@ export default function GestionNutricionista() {
   const [clientList, setClientList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
 
+  // Manejar el cambio en los campos del producto
   const handleProductChange = (e) => {
     const { id, value } = e.target;
     setProductData({
@@ -29,10 +30,10 @@ export default function GestionNutricionista() {
     });
   };
 
+  // Manejar el envío del formulario del producto
   const handleProductSubmit = (e) => {
     e.preventDefault();
 
-    // Enviar el producto al servidor para su revisión
     axios.post('http://127.0.0.1:5000/api/products', productData)
       .then(response => {
         alert('Producto enviado para revisión.');
@@ -57,9 +58,10 @@ export default function GestionNutricionista() {
       });
   };
 
+  // Manejar la búsqueda de clientes
   const handleClientSearch = (e) => {
     setClientSearch(e.target.value);
-    // Realizar la búsqueda de clientes
+
     axios.get(`http://127.0.0.1:5000/api/clients?query=${clientSearch}`)
       .then(response => {
         setClientList(response.data.clients);
@@ -69,16 +71,24 @@ export default function GestionNutricionista() {
       });
   };
 
+  // Asociar cliente con el nutricionista
   const associateClient = (client) => {
     setSelectedClient(client);
-    // Asociar el cliente al nutricionista
-    axios.post('http://127.0.0.1:5000/api/associate-client', { clientId: client.id })
-      .then(response => {
-        alert(`Cliente ${client.nombre} asociado exitosamente.`);
-      })
-      .catch(error => {
-        console.error('Error al asociar el cliente:', error);
-      });
+
+    // Obtener el nutricionistaId desde el localStorage
+    const nutricionistaId = localStorage.getItem('userID');
+
+    // Asociar el cliente al nutricionista usando el email del cliente
+    axios.post('http://127.0.0.1:5000/api/associate-client', {
+      clientEmail: client.email,
+      nutricionistaId: nutricionistaId
+    })
+    .then(response => {
+      alert(`Cliente ${client.nombre} asociado exitosamente.`);
+    })
+    .catch(error => {
+      console.error('Error al asociar el cliente:', error);
+    });
   };
 
   return (

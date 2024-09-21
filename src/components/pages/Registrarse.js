@@ -44,33 +44,64 @@ export default function Registrarse() {
   };
 
   const handleSubmit = () => {
-    // Encriptar contraseña con MD5
     const encryptedPassword = MD5(formData.password).toString();
-    
-    const dataToSubmit = { ...formData, password: encryptedPassword };
 
-    console.log(dataToSubmit);  // Verifica los datos antes de enviar
+    const commonData = {
+        email: formData.email,
+        password: encryptedPassword,
+        rol: role,
+    };
+
+    let specificData = {};
+    if (role === "nutricionista") {
+        specificData = {
+            cedula: formData.cedula,
+            nombre: formData.nombre,
+            apellido1: formData.apellido1,
+            apellido2: formData.apellido2,
+            codigo_nutricionista: formData.nutri_id,
+            edad: formData.edad,
+            fecha_nacimiento: formData.fecha_nacimiento,
+            peso: formData.peso,
+            imc: formData.imc,
+            direccion: formData.direccion,
+            credit_card: formData.credit_card,
+            cobro: formData.cobro,
+        };
+    } else if (role === "cliente") {
+        specificData = {
+            nombre: formData.nombre,
+            apellido1: formData.apellido1,
+            apellido2: formData.apellido2,
+            edad: formData.edad,
+            fecha_nacimiento: formData.fecha_nacimiento,
+            peso: formData.peso,
+            imc: formData.imc,
+            pais_residencia: formData.pais_reside,
+            peso_actual: formData.peso_actual,
+            medida_cintura: formData.cintura,
+            medida_cuello: formData.cuello,
+            medida_caderas: formData.caderas,
+            porcentaje_musculo: formData.porcentaje_musculo,
+            porcentaje_grasa: formData.porcentaje_grasa,
+            calorias_diarias_maximas: formData.consumo_calorias,
+        };
+    } else if (role === "administrador") {
+        specificData = { nombre_usuario: formData.usuario_admin };
+    }
+
+    const dataToSubmit = { ...commonData, ...specificData };
+
     axios.post("http://127.0.0.1:5000/api/register", dataToSubmit)
       .then(response => {
-        console.log(response.data);
         alert("¡Registro exitoso!");
-        navigate("/");  // Redirige después del registro
+        navigate(role === "nutricionista" ? "/GestionNutricionista" : "/");
       })
       .catch(error => {
-        if (error.response) {
-          console.error("Error data:", error.response.data);
-          console.error("Error status:", error.response.status);
-          console.error("Error headers:", error.response.headers);
-          alert(`Error en el servidor: ${error.response.status}`);
-        } else if (error.request) {
-          console.error("Error request:", error.request);
-          alert("El servidor no está respondiendo.");
-        } else {
-          console.error("Error en la configuración de la solicitud:", error.message);
-          alert("Error al configurar la solicitud.");
-        }
+        alert(`Error en el servidor: ${error.response.status}`);
       });
-  };
+};
+
 
   return (
     <div className="register-container">
@@ -234,5 +265,4 @@ export default function Registrarse() {
     </div>
   );
 }
-
 

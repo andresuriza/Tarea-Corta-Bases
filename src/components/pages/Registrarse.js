@@ -31,12 +31,12 @@ export default function Registrarse() {
     caderas: "",
     porcentaje_musculo: "",
     porcentaje_grasa: "",
-    consumo_calorias: ""
+    consumo_calorias: "",
   });
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  
+
   // Lista de países usando react-select-country-list
   const options = countryList().getData();
 
@@ -67,13 +67,14 @@ export default function Registrarse() {
 
   const handleSubmit = () => {
     const newErrors = {};
-    
+
     if (!validateEmail(formData.email)) {
       newErrors.email = "El correo electrónico no es válido.";
     }
 
     if (!validatePassword(formData.password)) {
-      newErrors.password = "La contraseña debe tener al menos 8 caracteres, incluyendo al menos 4 letras y 4 números.";
+      newErrors.password =
+        "La contraseña debe tener al menos 8 caracteres, incluyendo al menos 4 letras y 4 números.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -127,12 +128,13 @@ export default function Registrarse() {
 
     const dataToSubmit = { ...commonData, ...specificData };
 
-    axios.post("http://127.0.0.1:5000/api/register", dataToSubmit)
-      .then(response => {
+    axios
+      .post("http://127.0.0.1:5000/api/register", dataToSubmit)
+      .then((response) => {
         alert("¡Registro exitoso!");
         navigate(role === "nutricionista" ? "/" : "/");
       })
-      .catch(error => {
+      .catch((error) => {
         alert(`Error en el servidor: ${error.response.status}`);
       });
   };
@@ -140,8 +142,10 @@ export default function Registrarse() {
   return (
     <div className="register-container">
       <h1 className="registrarse">¡Únete a NutriTEC!</h1>
-      <p className="description">Tu viaje hacia una mejor nutrición comienza aquí.</p>
-      
+      <p className="description">
+        Tu viaje hacia una mejor nutrición comienza aquí.
+      </p>
+
       <div className="input-group">
         <label>Selecciona tu rol</label>
         <select id="role" onChange={handleRoleChange} value={role}>
@@ -160,7 +164,7 @@ export default function Registrarse() {
             placeholder="Ingresa tu correo electrónico"
             onChange={handleChange}
             value={formData.email}
-            style={{ borderColor: errors.email ? 'red' : '' }}
+            style={{ borderColor: errors.email ? "red" : "" }}
             title="Formato: nombre@dominio.com"
           />
           {errors.email && <div className="error-message">{errors.email}</div>}
@@ -174,10 +178,12 @@ export default function Registrarse() {
             placeholder="Ingresa tu contraseña"
             onChange={handleChange}
             value={formData.password}
-            style={{ borderColor: errors.password ? 'red' : '' }}
+            style={{ borderColor: errors.password ? "red" : "" }}
             title="Mínimo 8 caracteres, al menos 4 letras y 4 números"
           />
-          {errors.password && <div className="error-message">{errors.password}</div>}
+          {errors.password && (
+            <div className="error-message">{errors.password}</div>
+          )}
         </div>
 
         {role === "cliente" && (
@@ -254,7 +260,9 @@ export default function Registrarse() {
               <Select
                 options={options}
                 onChange={handleCountryChange}
-                value={options.find(option => option.label === formData.pais_reside)}
+                value={options.find(
+                  (option) => option.label === formData.pais_reside
+                )}
                 placeholder="Selecciona tu país"
               />
             </div>
@@ -473,7 +481,9 @@ export default function Registrarse() {
         <button type="button" onClick={handleSubmit} className="btn-register">
           Registrarse
         </button>
-        <p className="message">¡Estás a solo un paso de comenzar tu viaje hacia una mejor salud!</p>
+        <p className="message">
+          ¡Estás a solo un paso de comenzar tu viaje hacia una mejor salud!
+        </p>
       </form>
     </div>
   );

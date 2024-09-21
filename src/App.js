@@ -8,6 +8,7 @@ import GestionNutricionista from "./components/pages/GestionNutricionista";
 import ReporteCobro from "./components/pages/ReporteCobro";
 import Registrarse from "./components/pages/Registrarse";
 
+// Funcion principal que contiene directorio root y los directorios de las paginas que contiene
 function App() {
   return (
     <>
@@ -17,9 +18,11 @@ function App() {
           <Route path="/" exact element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registrarse" element={<Registrarse />} />
-          <Route path="/GestionNutricionista" element={<GestionNutricionista />} />
+          <Route
+            path="/GestionNutricionista"
+            element={<GestionNutricionista />}
+          />
           <Route path="/ReporteCobro" element={<ReporteCobro />} />
-
         </Routes>
       </Router>
     </>

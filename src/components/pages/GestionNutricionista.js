@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la redirección
 import './GestionNutricionista.css';
 
 export default function GestionNutricionista() {
@@ -20,6 +21,16 @@ export default function GestionNutricionista() {
   const [clientSearch, setClientSearch] = useState('');
   const [clientList, setClientList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
+
+  const navigate = useNavigate(); // useNavigate para manejar la navegación
+
+  // useEffect para verificar el rol y redirigir si no es nutricionista
+  useEffect(() => {
+    const rol = localStorage.getItem('userRole');
+    if (rol !== 'nutricionista') {
+      navigate('/'); // Redirige al home si el rol no es nutricionista
+    }
+  }, [navigate]); // Se ejecuta solo cuando el componente se monta
 
   // Manejar el cambio en los campos del producto
   const handleProductChange = (e) => {

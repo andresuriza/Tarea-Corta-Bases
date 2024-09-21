@@ -10,13 +10,18 @@ CORS(app)
 def connect_db():
     return sqlite3.connect('backend/nutritec.db')
 
-# Ruta para registrar usuarios (ya existente en tu código)
+# Ruta para registrar usuarios
 @app.route('/api/register', methods=['POST'])
 def register_user():
     try:
         data = request.json
         conn = connect_db()
         cursor = conn.cursor()
+
+        # Verificar si el correo ya está registrado
+        cursor.execute('SELECT * FROM usuarios WHERE email = ?', (data['email'],))
+        if cursor.fetchone():
+            return jsonify({"error": "El correo ya está registrado."}), 400
 
         # Si el rol es administrador, usar nombre_usuario para el campo nombre
         if data['rol'] == 'administrador':
@@ -25,7 +30,7 @@ def register_user():
             nombre = data['nombre']
 
         # Insertar el nombre (o nombre_usuario) junto con los datos comunes en la tabla "usuarios"
-        cursor.execute('''
+        cursor.execute(''' 
             INSERT INTO usuarios (nombre, email, password, rol)
             VALUES (?, ?, ?, ?)
         ''', (
@@ -37,43 +42,49 @@ def register_user():
 
         # Dependiendo del rol, insertar en la tabla correspondiente
         if data['rol'] == 'nutricionista':
-            cursor.execute('''
-                INSERT INTO nutricionistas (usuario_id, cedula, nombre, apellido1, apellido2, codigo_nutricionista, edad, fecha_nacimiento, peso, imc, direccion, credit_card, cobro)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            # Verificar si el código nutricionista ya existe
+            cursor.execute('SELECT * FROM nutricionistas WHERE codigo_nutricionista = ?', (data['codigo_nutricionista'],))
+            if cursor.fetchone():
+                return jsonify({"error": "El código nutricionista ya está registrado."}), 400
+
+            cursor.execute(''' 
+                INSERT INTO nutricionistas (usuario_id, cedula, nombre, apellido1, apellido2, codigo_nutricionista, fecha_nacimiento, peso, imc, direccion, credit_card, cobro)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 usuario_id, data['cedula'], data['nombre'], data['apellido1'], data.get('apellido2', None), 
-                data['codigo_nutricionista'], data['edad'], data['fecha_nacimiento'],
+                data['codigo_nutricionista'], data['fecha_nacimiento'],
                 data['peso'], data['imc'], data['direccion'], data['credit_card'], data['cobro']
             ))
 
         elif data['rol'] == 'administrador':
-            cursor.execute('''
+            cursor.execute(''' 
                 INSERT INTO administradores (usuario_id, nombre_usuario)
                 VALUES (?, ?)
             ''', (usuario_id, data['nombre_usuario']))
 
         elif data['rol'] == 'cliente':
-            cursor.execute('''
-                INSERT INTO clientes (usuario_id, nombre, apellido1, apellido2, edad, fecha_nacimiento, peso, imc, pais_residencia, peso_actual, medida_cintura, medida_cuello, medida_caderas, porcentaje_musculo, porcentaje_grasa, calorias_diarias_maximas)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            cursor.execute(''' 
+                INSERT INTO clientes (usuario_id, nombre, apellido1, apellido2, fecha_nacimiento, peso, imc, pais_residencia, peso_actual, medida_cintura, medida_cuello, medida_caderas, porcentaje_musculo, porcentaje_grasa, calorias_diarias_maximas)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 usuario_id, data['nombre'], data['apellido1'], data.get('apellido2', None),
-                data['edad'], data['fecha_nacimiento'], data['peso'], data['imc'], 
+                data['fecha_nacimiento'], data['peso'], data['imc'], 
                 data['pais_residencia'], data['peso_actual'], data['medida_cintura'], 
                 data['medida_cuello'], data['medida_caderas'], data['porcentaje_musculo'], 
                 data['porcentaje_grasa'], data['calorias_diarias_maximas']
             ))
 
         conn.commit()
-        conn.close()
         return jsonify({"message": f"{data['rol'].capitalize()} registrado exitosamente"}), 201
+
     except sqlite3.Error as e:
         print(f"Error en la base de datos: {e}")
         return jsonify({"error": "Hubo un error en la base de datos."}), 500
     except Exception as e:
         print(f"Error inesperado: {e}")
         return jsonify({"error": "Error inesperado."}), 500
-
+    finally:
+        conn.close()
 
 # Ruta para iniciar sesión (login)
 @app.route('/api/login', methods=['POST'])
@@ -95,7 +106,7 @@ def login_user():
         ''', (email, encrypted_password))
         user = cursor.fetchone()
         conn.close()
-        print()
+
         if user:
             # Devolver información básica del usuario si el login es exitoso
             return jsonify({
@@ -121,7 +132,7 @@ def add_product():
         cursor = conn.cursor()
 
         # Valor por defecto del estado: "en espera"
-        estado ='en-espera'
+        estado = 'en-espera'
 
         # Insertar el producto en la base de datos
         cursor.execute('''
@@ -166,8 +177,6 @@ def search_clients():
         print(f"Error en la base de datos: {e}")
         return jsonify({"error": "Hubo un error en la base de datos."}), 500
 
-
-
 @app.route('/api/nutricionistas', methods=['GET'])
 def get_nutricionistas():
     try:
@@ -204,7 +213,6 @@ def get_nutricionistas():
         return jsonify({"error": "Error inesperado."}), 500
 
 # Nueva ruta para asociar clientes a un nutricionista
-
 @app.route('/api/associate-client', methods=['POST'])
 def associate_client():
     try:
@@ -212,9 +220,6 @@ def associate_client():
 
         client_email = data['clientEmail']
         nutricionista_id = data['nutricionistaId']
-
-        print(f"Client Email: {client_email}")
-        print(f"Nutricionista ID: {nutricionista_id}")
 
         conn = connect_db()
         cursor = conn.cursor()
@@ -224,37 +229,30 @@ def associate_client():
         nutricionista = cursor.fetchone()
 
         if not nutricionista:
-            print("Nutricionista no encontrado.")
             return jsonify({"error": "Nutricionista no encontrado."}), 404
 
         codigo_nutricionista = nutricionista[0]
-        print(f"Código Nutricionista: {codigo_nutricionista}")
 
         # 2. Buscar el cliente por el email en la tabla usuarios y verificar su rol
         cursor.execute('''SELECT id, rol FROM usuarios WHERE email = ? AND rol='cliente' ''', (client_email,))
         user = cursor.fetchone()
 
         if not user:
-            print("Cliente no encontrado.")
             return jsonify({"error": "Cliente no encontrado."}), 404
         if user[1] != 'cliente':
-            print(f"El usuario no es un cliente. Rol encontrado: {user[1]}")
             return jsonify({"error": "El usuario no es un cliente."}), 400
 
         user_id = user[0]
-        print(f"User ID: {user_id}")
 
         # 3. Verificar que el cliente existe en la tabla clientes
         cursor.execute('''SELECT id FROM clientes WHERE usuario_id = ?''', (user_id,))
         client = cursor.fetchone()
 
         if not client:
-            print("Cliente no encontrado en la tabla de clientes.")
             return jsonify({"error": "Cliente no encontrado en la tabla de clientes."}), 404
 
         # 4. Actualizar el código del nutricionista en la tabla clientes
         cursor.execute('''UPDATE clientes SET codigo_nutricionista = ? WHERE usuario_id = ?''', (codigo_nutricionista, user_id))
-        print(f"Actualizando cliente con User ID: {user_id} y Código Nutricionista: {codigo_nutricionista}")
 
         conn.commit()
         return jsonify({"message": "Cliente asociado exitosamente al nutricionista."}), 200
@@ -266,8 +264,8 @@ def associate_client():
         print(f"Error inesperado: {e}")
         return jsonify({"error": "Error inesperado."}), 500
     finally:
-        # Asegurarse de cerrar la conexión a la base de datos
         if conn:
             conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

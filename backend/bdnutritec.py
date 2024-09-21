@@ -29,8 +29,8 @@ def create_tables():
         nombre TEXT NOT NULL,
         apellido1 TEXT NOT NULL,
         apellido2 TEXT,
-        codigo_nutricionista TEXT NOT NULL,
-        edad INTEGER NOT NULL,
+        codigo_nutricionista TEXT UNIQUE NOT NULL CHECK(codigo_nutricionista LIKE 'NUT:%'),
+        edad INTEGER,  -- Permitir que sea NULL inicialmente
         fecha_nacimiento TEXT NOT NULL,
         peso REAL NOT NULL,
         imc REAL NOT NULL,
@@ -40,6 +40,18 @@ def create_tables():
         foto BLOB,
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
     )
+    ''')
+
+    # Crear trigger para calcular la edad de nutricionistas
+    cursor.execute('''
+    CREATE TRIGGER calcular_edad_nutricionista
+    AFTER INSERT ON nutricionistas
+    FOR EACH ROW
+    BEGIN
+        UPDATE nutricionistas
+        SET edad = (strftime('%Y', 'now') - strftime('%Y', NEW.fecha_nacimiento))
+        WHERE id = NEW.id;
+    END;
     ''')
 
     # Crear tabla para administradores (sin cédula ni otros datos innecesarios)
@@ -53,7 +65,6 @@ def create_tables():
     ''')
 
     # Crear tabla para clientes
-
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS clientes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +72,7 @@ def create_tables():
         nombre TEXT NOT NULL,
         apellido1 TEXT NOT NULL,
         apellido2 TEXT,
-        edad INTEGER NOT NULL,
+        edad INTEGER,  -- Permitir que sea NULL inicialmente
         fecha_nacimiento TEXT NOT NULL,
         peso REAL NOT NULL,
         imc REAL NOT NULL,
@@ -73,12 +84,24 @@ def create_tables():
         porcentaje_musculo REAL NOT NULL,
         porcentaje_grasa REAL NOT NULL,
         calorias_diarias_maximas INTEGER NOT NULL,
-        codigo_nutricionista TEXT DEFAULT 'NUT',  -- Código de nutricionista asignado más tarde
+        codigo_nutricionista TEXT DEFAULT 'NUT:' NOT NULL,  -- Código de nutricionista asignado más tarde
         FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
     )
     ''')
 
+    # Crear trigger para calcular la edad de clientes
+    cursor.execute('''
+    CREATE TRIGGER calcular_edad_cliente
+    AFTER INSERT ON clientes
+    FOR EACH ROW
+    BEGIN
+        UPDATE clientes
+        SET edad = (strftime('%Y', 'now') - strftime('%Y', NEW.fecha_nacimiento))
+        WHERE id = NEW.id;
+    END;
+    ''')
 
+    # Crear tabla para productos
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS productos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

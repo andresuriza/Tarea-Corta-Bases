@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la redirección
 import './ReporteCobro.css';
 
 export default function ReporteCobro() {
   const [reportData, setReportData] = useState([]);
   const [tipoPago, setTipoPago] = useState('Semanal');
+  const navigate = useNavigate(); // useNavigate para manejar la navegación
+
+  // useEffect para verificar el rol y redirigir si no es administrador
+  useEffect(() => {
+    const rol = localStorage.getItem('userRole');
+    if (rol !== 'administrador') {
+      navigate('/'); // Redirige al home si el rol no es administrador
+    }
+  }, [navigate]); // Se ejecuta solo cuando el componente se monta
 
   useEffect(() => {
     const fetchData = async () => {
